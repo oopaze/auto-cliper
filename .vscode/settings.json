@@ -1,0 +1,17 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "python.terminal.activateEnvironment": true,
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    },
+    "editor.defaultFormatter": "ms-python.flake8"
+  },
+  "python.formatting.provider": "none",
+  "python.formatting.blackArgs": ["--line-length", "120"],
+  "files.insertFinalNewline": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": ["--max-line-length=120"]
+}

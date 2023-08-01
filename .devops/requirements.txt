@@ -1,0 +1,6 @@
+pytube==15.0.0
+moviepy==1.0.3
+pygame==2.5.0
+pillow==9.5.0
+python-slugify==8.0.1
+openai==0.27.8
