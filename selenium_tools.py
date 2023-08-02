@@ -1,4 +1,5 @@
 import os
+import time
 
 from selenium import webdriver
 from selenium.common.exceptions import UnexpectedAlertPresentException
@@ -6,8 +7,8 @@ from selenium.webdriver.common.by import By
 
 WAIT_DURATION = 20
 UPLOAD_WAIT_LIMIT = 80
-DEFAULT_PODFLOW_HASHTAGS = "\n\n#flow #podpah #clips #cortes #podflowclips #viral #fy"
-DEFAULT_SCIENCE_HASHTAGS = "\n\n#flow #podpah #sacani #ciencia #science #clips #cortes #scienceclips #viral #fy"
+DEFAULT_PODFLOW_HASHTAGS = "\n\n#flow #podcast #podpah #clips #cortes #podflowclips #viral #fy"
+DEFAULT_SCIENCE_HASHTAGS = "\n\n#flow #podcast #podpah #sacani #ciencia #science #clips #cortes #scienceclips #viral"
 
 
 def get_webdriver(is_podflow=False):
@@ -69,6 +70,7 @@ def upload_videos(clips, account):
         attache_file_to_the_form(driver, os.path.abspath(clip))
         configure_video(driver, is_podflow)
         publish_video(driver)
+        time.sleep(10)
 
     for clip in clips:
         try:
