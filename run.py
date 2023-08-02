@@ -7,7 +7,7 @@ from video_tools import VideoMixer
 
 VIDEO_URLS = [
     ("podflow", "https://www.youtube.com/watch?v=hWgz_KMBmngpy"),
-    ("scienceclips", "https://www.youtube.com/watch?v=BvKWBH-jWLE")
+    ("podflow", "https://www.youtube.com/watch?v=oy96txJnAhM")
 ]
 
 video_mixer = VideoMixer()
@@ -20,7 +20,7 @@ if __name__ == "__main__":
         mixed_video = video_mixer.generate_video(video["filepath"])
         paths = generate_clips(video["instance"], mixed_video)
 
-        uploader = Thread(target=partial(upload_videos, paths=paths, account=account))
+        uploader = Thread(target=partial(upload_videos, clips=paths, account=account))
         uploader.start()
         threads.append(uploader)
 

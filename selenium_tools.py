@@ -1,6 +1,7 @@
 import os
 
 from selenium import webdriver
+from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
 
 WAIT_DURATION = 20
@@ -44,10 +45,6 @@ def configure_video(driver: webdriver.Chrome, is_podflow=False):
     title_input = driver.find_element(By.XPATH, title_input_xpath)
     title_input.send_keys(DEFAULT_PODFLOW_HASHTAGS if is_podflow else DEFAULT_SCIENCE_HASHTAGS)
 
-    second_thumb_xpath = "/html/body/div[1]/div/div/div/div[2]/div[2]/div[2]/div[2]/div/div[1]/img[2]"
-    second_thumb = driver.find_element(By.XPATH, second_thumb_xpath)
-    second_thumb.click()
-
 
 def publish_video(driver: webdriver.Chrome):
     publish_button_xpath = "/html/body/div[1]/div/div/div/div[2]/div[2]/div[2]/div[8]/div[2]/button"
@@ -60,17 +57,29 @@ def publish_video(driver: webdriver.Chrome):
     driver.find_element(By.XPATH, charge_other_video_xpath)
 
     driver.implicitly_wait(WAIT_DURATION)
+    driver.switch_to.default_content()
 
 
-def upload_videos(clips_path, account):
-    clips = os.listdir(clips_path)
-
+def upload_videos(clips, account):
     is_podflow = account == "podflow"
-
     driver = get_webdriver(is_podflow=is_podflow)
 
-    for clip in clips:
+    def upload():
         open_tiktok(driver)
-        attache_file_to_the_form(driver, clip)
+        attache_file_to_the_form(driver, os.path.abspath(clip))
         configure_video(driver, is_podflow)
         publish_video(driver)
+
+    for clip in clips:
+        try:
+
+            try:
+                upload()
+            except UnexpectedAlertPresentException:
+                driver.quit()
+                driver = get_webdriver(is_podflow=is_podflow)
+                upload()
+
+        except Exception as e:
+            print(e)
+            driver.quit()

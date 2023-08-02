@@ -12,17 +12,22 @@ def generate_clips(video, video_mixer):
     amount_of_clips_monetized = length_in_seconds // CLIP_DURATION
 
     path = f"{get_video_folder_name(video)}/clips"
+    paths = []
 
     for i in range(0, amount_of_clips_monetized):
         clip_start_at = CLIP_DURATION * i
         clip_end_at = CLIP_DURATION * (i + 1)
-        video_mixer.save([clip_start_at, clip_end_at], f"{path}/{video.title} - Parte {i + 1}.mp4")
+        full_file_path = f"{path}/{video.title} - Parte {i + 1}.mp4"
+        video_mixer.save([clip_start_at, clip_end_at], full_file_path)
+        paths.append(full_file_path)
 
     last_clip_parcel = (length_in_seconds / CLIP_DURATION - amount_of_clips_monetized)
     if (last_clip_parcel > 0.2):
-        video_mixer.save([clip_end_at, length_in_seconds - 1], f"{path}/{video.title} - Parte {i + 2}.mp4",)
+        full_file_path = f"{path}/{video.title} - Parte {i + 2}.mp4"
+        video_mixer.save([clip_end_at, length_in_seconds - 1], full_file_path)
+        paths.append(full_file_path)
 
-    return path
+    return paths
 
 
 def get_video_folder_name(video):
