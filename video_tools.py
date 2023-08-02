@@ -16,9 +16,12 @@ class VideoMixer:
 
     def __init__(self):
         self.video_clip = None
-        self.satisfying_clip = None
         self.full_clip = None
         self.subtitles_clip = None
+
+    @property
+    def satisfying_clip(self):
+        return VideoFileClip(get_random_satisfying_video())
 
     def save(self, clip_range, filename):
         if self.full_clip is None:
@@ -34,7 +37,6 @@ class VideoMixer:
 
     def generate_video(self, full_video_filename):
         self.video_clip = VideoFileClip(full_video_filename)
-        self.satisfying_clip = VideoFileClip(get_random_satisfying_video())
 
         self.full_clip = self.get_normalized_video()
         return self

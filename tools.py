@@ -22,6 +22,8 @@ def generate_clips(video, video_mixer):
     if (last_clip_parcel > 0.2):
         video_mixer.save([clip_end_at, length_in_seconds - 1], f"{path}/{video.title} - Parte {i + 2}.mp4",)
 
+    return path
+
 
 def get_video_folder_name(video):
     return f"youtube-videos/{slugify(video.title)}"
