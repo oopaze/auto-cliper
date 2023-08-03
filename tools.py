@@ -4,7 +4,7 @@ from random import choice
 from pytube import YouTube
 from slugify import slugify
 
-CLIP_DURATION = 10
+CLIP_DURATION = 65
 
 
 def normalize_filename(filename):
