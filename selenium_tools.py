@@ -37,7 +37,7 @@ def attache_file_to_the_form(driver: webdriver.Chrome, filepath):
     file_field.send_keys(filepath)
 
 
-def configure_video(driver: webdriver.Chrome, is_podflow=False):
+def configure_video(driver: webdriver.Chrome, is_podflow=False, extra_hashtags=""):
     video_preview_xpath = "/html/body/div[1]/div/div/div/div[2]/div[1]/div"
     driver.find_element(By.XPATH, video_preview_xpath)
 
@@ -45,6 +45,7 @@ def configure_video(driver: webdriver.Chrome, is_podflow=False):
     title_input_xpath += "[1]/div/div[1]/div[2]/div/div/div/div/div/div/div/div/div/span/span"
     title_input = driver.find_element(By.XPATH, title_input_xpath)
     title_input.send_keys(DEFAULT_PODFLOW_HASHTAGS if is_podflow else DEFAULT_SCIENCE_HASHTAGS)
+    title_input.send_keys(extra_hashtags)
 
 
 def publish_video(driver: webdriver.Chrome):
@@ -61,14 +62,14 @@ def publish_video(driver: webdriver.Chrome):
     driver.switch_to.default_content()
 
 
-def upload_videos(clips, account, start_flag=None, stop_flag=None):
+def upload_videos(clips, account, start_flag=None, stop_flag=None, extra_hashtags=""):
     is_podflow = account == "podflow"
     driver = get_webdriver(is_podflow=is_podflow)
 
     def upload():
         open_tiktok(driver)
         attache_file_to_the_form(driver, os.path.abspath(clip))
-        configure_video(driver, is_podflow)
+        configure_video(driver, is_podflow, extra_hashtags)
         publish_video(driver)
         time.sleep(10)
 
