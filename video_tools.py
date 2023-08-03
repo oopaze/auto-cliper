@@ -31,7 +31,7 @@ class SubtitlesGenerator:
             align="center",
             color="yellow",
             stroke_color="black",
-            stroke_width=3,
+            stroke_width=2,
             size=(VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
         )
 
