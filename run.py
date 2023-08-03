@@ -1,10 +1,7 @@
 from main import generate_clips_from_video
 
-VIDEO_URLS = [
-    ("science", "https://www.youtube.com/watch?v=rgUT9jeNl_E", "#sacani #terra #plana #xandao #cientista", 0, 3)
-]
-
 if __name__ == "__main__":
+    VIDEO_URLS = []
     threads = []
 
     for account, video_url, extra_hashtags, start_at, end_at in VIDEO_URLS:

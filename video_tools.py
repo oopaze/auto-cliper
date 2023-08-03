@@ -12,8 +12,8 @@ from tools import CLIP_DURATION, get_random_satisfying_video
 
 
 class SubtitlesGenerator:
-    MAX_CHARS_PER_SEGMENT = 37
-    MAX_WORDS_PER_SEGMENT = 7
+    MAX_CHARS_PER_SEGMENT = 30
+    MAX_WORDS_PER_SEGMENT = 6
 
     def __init__(self):
         self.model = load_model("small")
@@ -41,7 +41,7 @@ class SubtitlesGenerator:
             "size": (VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
         }
 
-        outerTextClip = TextClip(**default_params, color="black", stroke_color="black", stroke_width=3)
+        outerTextClip = TextClip(**default_params, color="black", stroke_color="black", stroke_width=2)
         innerTextClip = TextClip(**default_params, color="yellow")
         return CompositeVideoClip([outerTextClip, innerTextClip])
 
