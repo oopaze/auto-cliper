@@ -12,8 +12,8 @@ from tools import CLIP_DURATION, get_random_satisfying_video
 
 
 class SubtitlesGenerator:
-    MAX_CHARS_PER_SEGMENT = 30
-    MAX_WORDS_PER_SEGMENT = 6
+    MAX_CHARS_PER_SEGMENT = 35
+    MAX_WORDS_PER_SEGMENT = 7
 
     def __init__(self):
         self.model = load_model("small")
