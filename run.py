@@ -1,15 +1,21 @@
 from main import generate_clips_from_video
 
 VIDEO_URLS = [
-    ("podflow", "https://www.youtube.com/watch?v=4bWJcUxSd8U", "#cristiano #papaicris #futebol #psicopata"),
-    ("podflow", "https://www.youtube.com/watch?v=ntnCRHnvI0I", "#marinasena #igao #ombrin #brinca-no-chao #love")
+    ("science", "https://www.youtube.com/watch?v=rgUT9jeNl_E", "#sacani #terra #plana #xandao #cientista", 0, 3)
 ]
 
 if __name__ == "__main__":
     threads = []
 
-    for account, video_url, extra_hashtags in VIDEO_URLS:
-        generate_clips_from_video(video_url, account, threads=threads, perform_upload=True, start_at=0, end_at=2)
+    for account, video_url, extra_hashtags, start_at, end_at in VIDEO_URLS:
+        generate_clips_from_video(
+            video_url, account,
+            threads=threads,
+            perform_upload=True,
+            extra_hashtags=extra_hashtags,
+            start_at=start_at,
+            end_at=end_at
+        )
 
     for t in threads:
         t.join()

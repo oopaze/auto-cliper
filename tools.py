@@ -1,4 +1,4 @@
-from os import listdir, mkdir
+from os import listdir, mkdir, remove
 from random import choice
 
 from pytube import YouTube
@@ -66,3 +66,10 @@ def download_video(vlink):
 def get_random_satisfying_video():
     satisfying_videos = listdir("satisfying-videos")
     return "satisfying-videos/" + choice(satisfying_videos)
+
+
+def clean_temp_files():
+    tmp_files = listdir("tmp")
+
+    for file in tmp_files:
+        remove("tmp/" + file)
