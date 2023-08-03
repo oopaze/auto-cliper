@@ -74,7 +74,7 @@ class VideoMixer:
         satisfying_clip = self.get_normalized_video(False, duration=main_clip.duration)
         subtittle_clip = self.subtitles_generator.generate(main_clip.audio)
 
-        clips_array = [main_clip, subtittle_clip, satisfying_clip]
+        clips_array = [main_clip, satisfying_clip, subtittle_clip]
         size = (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
         return CompositeVideoClip(clips_array, size=size).write_videofile(filename)

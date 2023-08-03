@@ -61,7 +61,7 @@ def publish_video(driver: webdriver.Chrome):
     driver.switch_to.default_content()
 
 
-def upload_videos(clips, account):
+def upload_videos(clips, account, start_flag=None, stop_flag=None):
     is_podflow = account == "podflow"
     driver = get_webdriver(is_podflow=is_podflow)
 
@@ -72,7 +72,16 @@ def upload_videos(clips, account):
         publish_video(driver)
         time.sleep(10)
 
-    for clip in clips:
+    for idx, clip in enumerate(clips):
+        if stop_flag is not None:
+            if stop_flag <= idx:
+                driver.quit()
+                return
+
+        if start_flag is not None:
+            if start_flag > idx:
+                continue
+
         try:
 
             try:
