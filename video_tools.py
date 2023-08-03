@@ -26,7 +26,7 @@ class SubtitlesGenerator:
         return TextClip(
             text,
             method="caption",
-            font="CoolveticaRg-Regular",
+            font="Roboto-Slab-Bold",
             fontsize=32,
             align="center",
             color="yellow",
