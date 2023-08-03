@@ -6,7 +6,8 @@ from tools import download_video, generate_clips
 from video_tools import VideoMixer
 
 VIDEO_URLS = [
-    ("podflow", "https://www.youtube.com/watch?v=QTCnBghbz_8"),
+    ("science", "https://www.youtube.com/watch?v=7IHW_GuxwDw"),
+    ("podflow", "https://www.youtube.com/watch?v=E-HMVq4V1iA")
 ]
 
 video_mixer = VideoMixer()

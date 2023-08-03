@@ -1,16 +1,61 @@
-from moviepy.editor import CompositeVideoClip, VideoFileClip
+from re import sub
+from uuid import uuid4
+
+from moviepy.editor import (AudioFileClip, CompositeVideoClip, TextClip,
+                            VideoFileClip)
 from moviepy.video.fx.all import crop
+from moviepy.video.tools.subtitles import SubtitlesClip
+from stable_whisper import modify_model
+from whisper import load_model
 
 from tools import CLIP_DURATION, get_random_satisfying_video
 
 
 class SubtitlesGenerator:
-    ...
+    def __init__(self):
+        self.model = load_model("small")
+        modify_model(self.model)
+
+    def generate(self, audio_clip):
+        filepath = self.save_separed_audio(audio_clip)
+        result_subtitles = self.model.transcribe(filepath, language="pt", vad=True)
+        normalized_subtitle = self.normalize_result(result_subtitles)
+        return SubtitlesClip(normalized_subtitle, self.subtitle_generator).set_position("center")
+
+    def subtitle_generator(self, text):
+        return TextClip(
+            text,
+            method="caption",
+            font="CoolveticaRg-Regular",
+            fontsize=32,
+            align="center",
+            color="yellow",
+            stroke_color="black",
+            stroke_width=3,
+            size=(VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
+        )
+
+    def normalize_result(self, result_subtitles):
+        normalized_subtitle = []
+
+        for segment in result_subtitles.segments:
+            normalized_subtitle.append(((segment.start, segment.end), segment.text))
+
+        return normalized_subtitle
+
+    def normalize_text(self, text):
+        return sub(r'[^\w]', ' ', text).replace("  ", " ")
+
+    def save_separed_audio(self, audio_clip: AudioFileClip):
+        filepath = f"tmp/{uuid4()}.mp3"
+        audio_clip.write_audiofile(filepath)
+        return filepath
 
 
 class VideoMixer:
     SCREEN_WIDTH = 540
     SCREEN_HEIGHT = 960
+    HEIGHT_DIFF = 60
 
     subtitles_generator = SubtitlesGenerator()
 
@@ -29,8 +74,9 @@ class VideoMixer:
 
         main_clip = self.full_clip.subclip(*clip_range)
         satisfying_clip = self.get_normalized_video(False, duration=main_clip.duration)
+        subtittle_clip = self.subtitles_generator.generate(main_clip.audio)
 
-        clips_array = [main_clip, satisfying_clip]
+        clips_array = [main_clip, subtittle_clip, satisfying_clip]
         size = (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
         return CompositeVideoClip(clips_array, size=size).write_videofile(filename)
@@ -42,7 +88,7 @@ class VideoMixer:
         return self
 
     def get_normalized_video(self, is_main=True, duration=CLIP_DURATION):
-        height_diff = +60 if is_main else -60
+        height_diff = +self.HEIGHT_DIFF if is_main else -self.HEIGHT_DIFF
         position = "top" if is_main else "bottom"
         video_clip = self.video_clip if is_main else self.satisfying_clip
 
