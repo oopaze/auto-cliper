@@ -12,6 +12,9 @@ from tools import CLIP_DURATION, get_random_satisfying_video
 
 
 class SubtitlesGenerator:
+    MAX_CHARS_PER_SEGMENT = 37
+    MAX_WORDS_PER_SEGMENT = 7
+
     def __init__(self):
         self.model = load_model("small")
         modify_model(self.model)
@@ -19,19 +22,28 @@ class SubtitlesGenerator:
     def generate(self, audio_clip):
         filepath = self.save_separed_audio(audio_clip)
         result_subtitles = self.model.transcribe(filepath, language="pt", vad=True)
+        result_subtitles = result_subtitles.split_by_length(
+            max_chars=self.MAX_CHARS_PER_SEGMENT,
+            max_words=self.MAX_WORDS_PER_SEGMENT
+        )
         normalized_subtitle = self.normalize_result(result_subtitles)
-        return SubtitlesClip(normalized_subtitle, self.subtitle_generator).set_position("center")
+        return SubtitlesClip(normalized_subtitle, self.subtitle_generator).set_position(
+            lambda t: ("center", t + (VideoMixer.SCREEN_HEIGHT // 2))
+        )
 
     def subtitle_generator(self, text):
-        return TextClip(
-            text,
-            method="caption",
-            font="Acherus-Grotesque-Bold",  # Geometos-Rounded or Acherus-Grotesque-Bold
-            fontsize=30,
-            align="center",
-            color="yellow",
-            size=(VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
-        )
+        default_params = {
+            "txt": text,
+            "method": "caption",
+            "font": "Acherus-Grotesque-Bold",  # Geometos-Rounded or Acherus-Grotesque-Bold
+            "fontsize": 30,
+            "align": "center",
+            "size": (VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
+        }
+
+        outerTextClip = TextClip(**default_params, color="black", stroke_color="black", stroke_width=3)
+        innerTextClip = TextClip(**default_params, color="yellow")
+        return CompositeVideoClip([outerTextClip, innerTextClip])
 
     def normalize_result(self, result_subtitles):
         normalized_subtitle = []
