@@ -26,12 +26,10 @@ class SubtitlesGenerator:
         return TextClip(
             text,
             method="caption",
-            font="Roboto-Slab-Bold",
-            fontsize=32,
+            font="Acherus-Grotesque-Bold",  # Geometos-Rounded or Acherus-Grotesque-Bold
+            fontsize=30,
             align="center",
             color="yellow",
-            stroke_color="black",
-            stroke_width=2,
             size=(VideoMixer.SCREEN_WIDTH - VideoMixer.HEIGHT_DIFF, None)
         )
 

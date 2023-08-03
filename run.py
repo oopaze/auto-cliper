@@ -5,9 +5,7 @@ from selenium_tools import upload_videos
 from tools import download_video, generate_clips
 from video_tools import VideoMixer
 
-VIDEO_URLS = [
-    ("science", "https://www.youtube.com/watch?v=T-NZs-09Ccs")
-]
+VIDEO_URLS = []
 
 video_mixer = VideoMixer()
 
