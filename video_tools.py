@@ -28,7 +28,7 @@ class SubtitlesGenerator:
         )
         normalized_subtitle = self.normalize_result(result_subtitles)
         return SubtitlesClip(normalized_subtitle, self.subtitle_generator).set_position(
-            lambda t: ("center", t + (VideoMixer.SCREEN_HEIGHT // 2))
+            lambda t: ("center", 40 + (VideoMixer.SCREEN_HEIGHT // 2))
         )
 
     def subtitle_generator(self, text):
