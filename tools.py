@@ -5,14 +5,13 @@ from pytube import YouTube
 from slugify import slugify
 
 CLIP_DURATION = 65
-CLIP_START_DELAY = 3
 
 
 def normalize_filename(filename):
     return filename.replace(":", " -")
 
 
-def generate_clips(video, video_mixer, start_at=0, end_at=float("inf")):
+def generate_clips(video, video_mixer, start_at=0, end_at=float("inf"), clip_start_delay=0):
     if end_at is None:
         end_at = float("inf")
 
@@ -33,8 +32,8 @@ def generate_clips(video, video_mixer, start_at=0, end_at=float("inf")):
     paths = []
 
     for i in range(start_at, amount_of_clips_monetized):
-        clip_start_at = CLIP_START_DELAY + CLIP_DURATION * i
-        clip_end_at = CLIP_START_DELAY + CLIP_DURATION * (i + 1)
+        clip_start_at = clip_start_delay + CLIP_DURATION * i
+        clip_end_at = clip_start_delay + CLIP_DURATION * (i + 1)
         full_file_path = f"{path}/{normalize_filename(video.title)} - Parte {i + 1}.mp4"
         video_mixer.save([clip_start_at, clip_end_at], full_file_path)
         paths.append(full_file_path)
