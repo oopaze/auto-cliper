@@ -24,14 +24,15 @@ video_storage.add_video(
 if __name__ == "__main__":
     threads = []
 
-    for account, video_url, extra_hashtags, start_at, end_at in video_storage:
+    for account, video_url, extra_hashtags, start_at, end_at, clip_start_delay in video_storage:
         generate_clips_from_video(
             video_url, account,
             threads=threads,
             perform_upload=True,
             extra_hashtags=extra_hashtags,
             start_at=start_at,
-            end_at=end_at
+            end_at=end_at,
+            start_delay=clip_start_delay
         )
 
     for t in threads:
