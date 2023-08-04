@@ -1,18 +1,21 @@
 from main import generate_clips_from_video
+from youtube_tools import YVideoStorage
+
+video_storage = YVideoStorage()
+
+video_storage.add_video("science", "https://youtu.be/du9gFOMaz8c", "#dinossauro #extincao #sacani #inteligencialtda")
+video_storage.add_video("podflow", "https://youtu.be/r04n-PQxbWI", "#rodrygo #igao #gordofobia #academia", end_at=2)
+video_storage.add_video(
+    "podflow",
+    "https://youtu.be/ZDEptuy7D9s",
+    "#panico #silvio #carioca #ronaldo #fenomeno",
+    end_at=2
+)
 
 if __name__ == "__main__":
-    VIDEO_URLS = [
-        (
-            "science",
-            "https://www.youtube.com/watch?v=juh0Kj7N04I&t=91s",
-            "#marimaria #igao #laurabrito #mitico #fica #namoro",
-            0,
-            2
-        )
-    ]
     threads = []
 
-    for account, video_url, extra_hashtags, start_at, end_at in VIDEO_URLS:
+    for account, video_url, extra_hashtags, start_at, end_at in video_storage:
         generate_clips_from_video(
             video_url, account,
             threads=threads,
