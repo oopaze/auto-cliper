@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 
 WAIT_DURATION = 20
 UPLOAD_WAIT_LIMIT = 80
-DEFAULT_PODFLOW_HASHTAGS = "\n\n#flow #podcast #podpah #clips #cortes #podflowclips"
-DEFAULT_SCIENCE_HASHTAGS = "\n\n#flow #podcast #podpah #sacani #ciencia #science #clips #cortes #scienceclips"
+DEFAULT_PODFLOW_HASHTAGS = "\n\n#podflowclips #clips "
+DEFAULT_SCIENCE_HASHTAGS = "\n\n#scienceclips #ciencia #clips "
 
 
 def get_webdriver(is_podflow=False):
