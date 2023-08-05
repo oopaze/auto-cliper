@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from moviepy.editor import (AudioFileClip, CompositeVideoClip, TextClip,
                             VideoFileClip)
-from moviepy.video.fx.all import crop
+from moviepy.video.fx.all import crop, resize
 from moviepy.video.tools.subtitles import SubtitlesClip
 from stable_whisper import modify_model
 from whisper import load_model
@@ -19,7 +19,7 @@ class SubtitlesGenerator:
         self.model = load_model("small")
         modify_model(self.model)
 
-    def generate(self, audio_clip):
+    def generate(self, audio_clip, with_satisfying=True):
         filepath = self.save_separed_audio(audio_clip)
         result_subtitles = self.model.transcribe(filepath, language="pt", vad=True)
         result_subtitles = result_subtitles.split_by_length(
@@ -27,9 +27,10 @@ class SubtitlesGenerator:
             max_words=self.MAX_WORDS_PER_SEGMENT
         )
         normalized_subtitle = self.normalize_result(result_subtitles)
-        return SubtitlesClip(normalized_subtitle, self.subtitle_generator).set_position(
-            lambda t: ("center", VideoMixer.SCREEN_HEIGHT // 2)
-        )
+
+        y_pos = VideoMixer.SCREEN_HEIGHT // 2 if with_satisfying else VideoMixer.SCREEN_HEIGHT - 200
+        return SubtitlesClip(normalized_subtitle, self.subtitle_generator) \
+            .set_position(("center", y_pos))
 
     def subtitle_generator(self, text):
         default_params = {
@@ -74,43 +75,58 @@ class VideoMixer:
         self.full_clip = None
         self.subtitles_clip = None
 
-    @property
-    def satisfying_clip(self):
-        return VideoFileClip(get_random_satisfying_video())
-
-    def save(self, clip_range, filename):
+    def save(self, clip_range, filename, with_satisfying=True):
         if self.full_clip is None:
             raise ValueError("You need to generate video before save")
 
         main_clip = self.full_clip.subclip(*clip_range)
-        satisfying_clip = self.get_normalized_video(False, duration=main_clip.duration)
-        subtittle_clip = self.subtitles_generator.generate(main_clip.audio)
+        subtittle_clip = self.subtitles_generator.generate(main_clip.audio, with_satisfying)
+        clips_array = [main_clip, subtittle_clip]
 
-        clips_array = [main_clip, satisfying_clip, subtittle_clip]
+        if with_satisfying:
+            satisfying_clip = self.get_satisfying_clip(main_clip.duration)
+            clips_array.insert(1, satisfying_clip)
+
         size = (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
         return CompositeVideoClip(clips_array, size=size).write_videofile(filename)
 
-    def generate_video(self, full_video_filename):
+    def generate_video(self, full_video_filename, with_satisfying=True):
         self.video_clip = VideoFileClip(full_video_filename)
-
-        self.full_clip = self.get_normalized_video()
+        self.full_clip = self.get_normalized_video(with_satisfying=with_satisfying)
         return self
 
-    def get_normalized_video(self, is_main=True, duration=CLIP_DURATION):
-        height_diff = +self.HEIGHT_DIFF if is_main else -self.HEIGHT_DIFF
-        position = "top" if is_main else "bottom"
-        video_clip = self.video_clip if is_main else self.satisfying_clip
+    def get_normalized_video(self, with_satisfying=True):
+        video_clip = self.video_clip
+
+        height = video_clip.size[1]
+        width = (video_clip.size[1] / 16) * 9
+
+        if with_satisfying:
+            height = (self.SCREEN_HEIGHT / 2) + self.HEIGHT_DIFF
+            width = self.SCREEN_WIDTH
 
         clip = crop(
             video_clip,
+            width=width,
+            height=height,
+            x_center=video_clip.size[0] / 2,
+            y_center=video_clip.size[1] / 2
+        )
+
+        if not with_satisfying:
+            size = (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+            clip = resize(clip, size)
+
+        return clip.set_position("top" if with_satisfying else "center")
+
+    def get_satisfying_clip(self, duration=CLIP_DURATION):
+        video_clip = VideoFileClip(get_random_satisfying_video())
+
+        return crop(
+            video_clip,
             width=self.SCREEN_WIDTH,
-            height=(self.SCREEN_HEIGHT / 2) + height_diff,
+            height=(self.SCREEN_HEIGHT / 2) + self.HEIGHT_DIFF,
             x_center=video_clip.size[0] / 2,
             y_center=video_clip.size[1] / 2,
-        ).set_position(position)
-
-        if not is_main:
-            clip = clip.without_audio().set_duration(duration)
-
-        return clip
+        ).set_position("bottom").without_audio().set_duration(duration)

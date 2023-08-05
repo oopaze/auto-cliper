@@ -4,14 +4,14 @@ from random import choice
 from pytube import YouTube
 from slugify import slugify
 
-CLIP_DURATION = 65
+CLIP_DURATION = 10
 
 
 def normalize_filename(filename):
     return filename.replace(":", " -")
 
 
-def generate_clips(video, video_mixer, start_at=0, end_at=float("inf"), clip_start_delay=0):
+def generate_clips(video, video_mixer, start_at=0, end_at=float("inf"), clip_start_delay=0, with_satisfying=True):
     if end_at is None:
         end_at = float("inf")
 
@@ -35,13 +35,13 @@ def generate_clips(video, video_mixer, start_at=0, end_at=float("inf"), clip_sta
         clip_start_at = clip_start_delay + CLIP_DURATION * i
         clip_end_at = clip_start_delay + CLIP_DURATION * (i + 1)
         full_file_path = f"{path}/{normalize_filename(video.title)} - Parte {i + 1}.mp4"
-        video_mixer.save([clip_start_at, clip_end_at], full_file_path)
+        video_mixer.save([clip_start_at, clip_end_at], full_file_path, with_satisfying=with_satisfying)
         paths.append(full_file_path)
 
     last_clip_parcel = (amount_of_clips - amount_of_clips_monetized)
     if (last_clip_parcel > 0.2):
         full_file_path = f"{path}/{normalize_filename(video.title)} - Parte {i + 2}.mp4"
-        video_mixer.save([clip_end_at, length_in_seconds - 1], full_file_path)
+        video_mixer.save([clip_end_at, length_in_seconds - 1], full_file_path, with_satisfying=with_satisfying)
         paths.append(full_file_path)
 
     return paths
