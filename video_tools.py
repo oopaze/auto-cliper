@@ -85,7 +85,7 @@ class VideoMixer:
 
         if with_satisfying:
             satisfying_clip = self.get_satisfying_clip(main_clip.duration)
-            clips_array.insert(1, satisfying_clip)
+            clips_array.insert(0, satisfying_clip)
 
         size = (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
@@ -126,7 +126,7 @@ class VideoMixer:
         return crop(
             video_clip,
             width=self.SCREEN_WIDTH,
-            height=(self.SCREEN_HEIGHT / 2) + self.HEIGHT_DIFF,
+            height=(self.SCREEN_HEIGHT / 2) - self.HEIGHT_DIFF,
             x_center=video_clip.size[0] / 2,
             y_center=video_clip.size[1] / 2,
         ).set_position("bottom").without_audio().set_duration(duration)
